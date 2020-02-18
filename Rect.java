@@ -1,5 +1,3 @@
-import java.util.*;
-
 class Rect {
     public int left;
     public int top;

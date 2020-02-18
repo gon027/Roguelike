@@ -1,8 +1,6 @@
 import java.util.*;
 
 class Dungeon{
-    private Random rand = new Random();
-    
     private int[][] map;
     private ArrayList<Rect> mapList = new ArrayList<Rect>();
     private ArrayList<Vec2> points = new ArrayList<Vec2>();
@@ -39,51 +37,49 @@ class Dungeon{
 
     void createDungeon(){
         init();
-        divisionMap();
+        divisionMap(mapList.get(0));
         createRoom();
         rectShow();
         createRoad();
+        System.out.println(mapList.size());
     }
 
     void init() {
         fillValue(0, 0, WIDTH, HEIGHT, WALL);
+        mapList.clear();
         mapList.add(new Rect(0, 0, WIDTH, HEIGHT));
     }
 
-    void divisionMap(){
-        boolean hvFrag = rand.nextBoolean();
-        // boolean hvFrag = true;
-        // boolean hvFrag = false;
-        
-        if(hvFrag){
-            // 縦に分割
-            verticalSplit();
-        }
-        else{
-            // 横に分割
-            horizontalSplit();
-        }
-    }
-
-    boolean divisionCheck(int _range){
-        if(_range - 4 <= MAXRECT){
+    // 分割できるか判定
+    boolean divisionCheck(int _range) {
+        if (_range - 4 <= MAXRECT) {
             return true;
         }
-
         return false;
     }
 
-    // 縦
-    void verticalSplit(){
-        Rect r = mapList.get(mapList.size() - 1);
 
-        int split_w = (r.right - r.left);
-        if (split_w - 4 <= MAXRECT){
+    void divisionMap(Rect _r){
+        boolean hvFrag = RandomUtil.rand.nextBoolean();
+        // hvFrag = false;
+        
+        if(hvFrag){
+            verticalSplit(_r);    // 縦に分割
+        }
+        else{
+            horizontalSplit(_r);  // 横に分割
+        }
+    }
+
+    // 縦
+    void verticalSplit(Rect _r){
+        int split = (_r.right - _r.left);
+        if(divisionCheck(split)){
             return;
         }
 
-        int left = r.left + 2;
-        int right = r.right - 2;
+        int left = _r.left + 2;
+        int right = _r.right - 2;
 
         int width = right - left;
 
@@ -91,38 +87,36 @@ class Dungeon{
 
         left = left + RandomUtil.getRandomRange(MINRECT + 2, mid + 2);
 
-        Rect child = new Rect(left, r.top, r.right, r.bottom); 
+        Rect child = new Rect(left, _r.top, _r.right, _r.bottom);
         mapList.add(child);
 
-        r.right = left + 1;
+        _r.right = left + 1;
 
-        swap();
-        divisionMap();
+        divisionMap(mapList.get(mapList.size() - 1));
+        divisionMap(_r);
     }
 
     // 横
-    void horizontalSplit() {
-        Rect r = mapList.get(mapList.size() - 1);
-
-        int split_h = (r.bottom - r.top);
-        if (split_h - 4 < MAXRECT){
+    void horizontalSplit(Rect _r) {
+        int split = (_r.bottom - _r.top);
+        if (divisionCheck(split)) {
             return;
         }
 
-        int top = r.top + 2;
-        int bottom = r.bottom - 2;
+        int top = _r.top + 2;
+        int bottom = _r.bottom - 2;
 
         int height = bottom - top;
 
         int mid = height / 2;
 
         top = top + RandomUtil.getRandomRange(MINRECT + 2, mid + 2);
-        Rect child = new Rect(r.left, top, r.right, r.bottom);
+        Rect child = new Rect(_r.left, top, _r.right, _r.bottom);
         mapList.add(child);
-        r.bottom = top + 1;
+        _r.bottom = top + 1;
 
-        swap();
-        divisionMap();
+        divisionMap(mapList.get(mapList.size() - 1));
+        divisionMap(_r);
     }
 
     void createRoom(){
@@ -249,15 +243,11 @@ class Dungeon{
             }
         }
 
-        // System.out.println(mapList.get(0).point.size());
-
         // for(int i = 0; i < mapList.size(); i++){
         //     int index_left = i;
         //     int index_right = (i + 1) % mapList.size();
         //     Rect r1 = mapList.get(index_left);
         //     Rect r2 = mapList.get(index_right);
-
-
         // }
     }
 
@@ -390,7 +380,7 @@ class Dungeon{
 
     void swap(){
         // listの最後と2番目の要素を入れ替える
-        boolean swapFlag = rand.nextBoolean();
+        boolean swapFlag = RandomUtil.rand.nextBoolean();
         if(swapFlag){
             var temp = mapList.get(mapList.size() - 1);
             mapList.set(mapList.size() - 1, mapList.get(mapList.size() - 2));
