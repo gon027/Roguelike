@@ -5,8 +5,9 @@ class Dungeon{
     
     private int[][] map;
     private ArrayList<Rect> mapList = new ArrayList<Rect>();
+    private ArrayList<Vec2> points = new ArrayList<Vec2>();
 
-    private final int WIDTH = 50;
+    private final int WIDTH = 54;
     private final int HEIGHT = 30;
 
     // 区間を分ける時の最大値と最小値
@@ -37,9 +38,9 @@ class Dungeon{
         rectShow();
         createRoad();
 
-        for(var e : mapList){
-            System.out.println(e);
-        }
+        // for(var e : mapList){
+        //     System.out.println(e);
+        // }
 
         mapPrint();
     }
@@ -214,20 +215,49 @@ class Dungeon{
         }*/
 
         for (var r : mapList) {
-            // 上下にランダムな道を作る
-            // int tx = RandomUtil.getRandomRange(r.left, r.right);
-            int rtx = RandomUtil.getRandomRange(r.room.left, r.room.right);
-            fillVLine(r.top, r.room.top, rtx, 3);
-            rtx = RandomUtil.getRandomRange(r.room.left, r.room.right);
-            fillVLine(r.room.bottom, r.bottom - 1, rtx, 3);
-
-            int ty = RandomUtil.getRandomRange(r.top, r.bottom);
-            int rty = RandomUtil.getRandomRange(r.room.top, r.room.bottom);
-            fillHLine(r.left, r.room.left, rty, 3);
-            rty = RandomUtil.getRandomRange(r.room.top, r.room.bottom);
-            fillHLine(r.room.right, r.right - 1, rty, 3);
             
+
+            // 上下にランダムな道を作る
+            int rtx = RandomUtil.getRandomRange(r.room.left, r.room.right);
+            if(outOfArrayY(r.top, r.room.top)){
+                fillHLine(r.left + 1, r.right - 1, r.top, roomDebugCount);
+                fillVLine(r.top, r.room.top, rtx, roomDebugCount);
+                points.add(new Vec2(rtx, r.top));
+            }
+
+            rtx = RandomUtil.getRandomRange(r.room.left, r.room.right);
+            if(outOfArrayY(r.room.bottom, r.bottom)){
+                // fillHLine(r.left + 1, r.right - 1, r.bottom, roomDebugCount);
+                fillVLine(r.room.bottom, r.bottom, rtx, roomDebugCount);
+                points.add(new Vec2(rtx, r.bottom));
+            }
+
+            int rty = RandomUtil.getRandomRange(r.room.top, r.room.bottom);
+            if(outOfArrayX(r.left, r.room.left)){
+                fillVLine(r.top + 1, r.bottom - 1, r.left, roomDebugCount);
+
+                fillHLine(r.left, r.room.left, rty, roomDebugCount);
+                points.add(new Vec2(r.left, rty));
+            }
+            
+
+            rty = RandomUtil.getRandomRange(r.room.top, r.room.bottom);
+            if(outOfArrayX(r.room.right, r.right)){
+                fillHLine(r.room.right, r.right, rty, roomDebugCount);
+                points.add(new Vec2(r.right, rty));
+            }
         }
+
+        // System.out.println(mapList.get(0).point.size());
+
+        // for(int i = 0; i < mapList.size(); i++){
+        //     int index_left = i;
+        //     int index_right = (i + 1) % mapList.size();
+        //     Rect r1 = mapList.get(index_left);
+        //     Rect r2 = mapList.get(index_right);
+
+
+        // }
     }
 
     void fillHLine(int _left, int _right, int _y, int _value){
@@ -237,7 +267,7 @@ class Dungeon{
             _right = t;
         }
 
-        fillValue(_left, _y, _right + 1, _y + 1, _value);
+        fillValue(_left, _y, _right, _y + 1, _value);
     }
 
     void fillVLine(int _top, int _bottom, int _x, int _value){
@@ -247,9 +277,22 @@ class Dungeon{
             _bottom = t;
         }
 
-        fillValue(_x, _top, _x + 1, _bottom + 1, _value);
+        fillValue(_x, _top, _x + 1, _bottom, _value);
     }
 
+    boolean outOfArrayY(int _top, int _bottom){
+        if(_top <= 0 || _bottom >= HEIGHT){
+            return false;
+        }
+        return true;
+    }
+
+    boolean outOfArrayX(int _left, int _right) {
+        if (_left <= 0 || _right >= WIDTH) {
+            return false;
+        }
+        return true;
+    }
 
     void linkPointVertical(int _x1, int _y1, int _x2, int _y2, int _value) {
         setValue(_x1, _y1, 3);
@@ -259,21 +302,18 @@ class Dungeon{
         int hheight = RandomUtil.getRandomRange(2, h - 1);
         int dist = _y1 + hheight;
 
-        // fillValue(_x1, _y1, _x1 + 1, dist, _value);
-        // fillValue(_x2, dist, _x2 + 1, _y2 + 1, _value);
+        fillValue(_x1, _y1, _x1 + 1, dist, _value);
+        fillValue(_x2, dist, _x2 + 1, _y2 + 1, _value);
 
-        // if (_x1 > _x2) {
-        //     int t = _x1;
-        //     _x1 = _x2;
-        //     _x2 = t;
-        // }
+        if (_x1 > _x2) {
+            int t = _x1;
+            _x1 = _x2;
+            _x2 = t;
+        }
 
-        // fillValue(_x1, dist, _x2 + 1, dist + 1, _value);
+        fillValue(_x1, dist, _x2 + 1, dist + 1, _value);
     }
 
-    /*
-     * 初期位置x, 初期位置y, 目的地x, 目的地y
-     */ 
     void linkPointHorizontal(int _x1, int _y1, int _x2, int _y2, int _value) {
         int width = Math.abs(_x2 - _x1);
 
@@ -296,13 +336,13 @@ class Dungeon{
         for (int y = 0; y < HEIGHT; y++) {
             for (int x = 0; x < WIDTH; x++) {
                 if(map[y][x] == 0){
-                    System.out.print("# ");
+                    System.out.print("  ");
                 }
                 else if(map[y][x] == 1){
-                    System.out.print("_ ");
+                    System.out.print("  ");
                 }
                 else if(map[y][x] == 2){
-                    System.out.print(". ");
+                    System.out.print("+ ");
                 }else{
                     System.out.print("[ ");
                 }
