@@ -3,6 +3,7 @@ class Test{
 
     Test(){
         map = new Dungeon();
+        map.mapPrint();
     }
 
     public static void main(String[] args){

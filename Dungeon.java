@@ -7,8 +7,8 @@ class Dungeon{
     private ArrayList<Rect> mapList = new ArrayList<Rect>();
     private ArrayList<Vec2> points = new ArrayList<Vec2>();
 
-    private final int WIDTH = 54;
-    private final int HEIGHT = 30;
+    private final int WIDTH;
+    private final int HEIGHT;
 
     // 区間を分ける時の最大値と最小値
     private final int MAXRECT = 13;
@@ -25,28 +25,29 @@ class Dungeon{
 
     private int roomDebugCount = 2;
 
-    Dungeon(){
+    Dungeon(int _width, int _height){
+        WIDTH = _width;
+        HEIGHT = _height;
         map = new int[HEIGHT][WIDTH];
 
+        createDungeon();
+    }
+
+    Dungeon(){
+        this(54, 30);
+    }
+
+    void createDungeon(){
         init();
-        mapList.add(new Rect(0, 0, WIDTH, HEIGHT));
         divisionMap();
-
-
         createRoom();
-
         rectShow();
         createRoad();
-
-        // for(var e : mapList){
-        //     System.out.println(e);
-        // }
-
-        mapPrint();
     }
 
     void init() {
         fillValue(0, 0, WIDTH, HEIGHT, WALL);
+        mapList.add(new Rect(0, 0, WIDTH, HEIGHT));
     }
 
     void divisionMap(){
@@ -332,7 +333,7 @@ class Dungeon{
         fillValue(dist, _y1, dist + 1, _y2 + 1, _value);
     }
 
-    void mapPrint(){
+    public void mapPrint(){
         for (int y = 0; y < HEIGHT; y++) {
             for (int x = 0; x < WIDTH; x++) {
                 if(map[y][x] == 0){
