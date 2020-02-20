@@ -9,7 +9,13 @@ class Dungeon{
 
     // 部屋の大きさの最大値と最小値
     private final int MINROOMSIZE = 4;
-    private final int MAXROOMSIZE = 8;
+    private final int MAXROOMSIZE = 6;
+
+    private final int MINROOMSIZEX = 4;
+    private final int MAXROOMSIZEX = 6;
+
+    private final int MINROOMSIZEY = 4;
+    private final int MAXROOMSIZEY = 5;
     private final int PADDING = 2;
 
     Dungeon() {
@@ -28,7 +34,7 @@ class Dungeon{
     void createDungeon(){
         init();
         divisionMap(mapList.get(0));
-        // rectRangeShow();
+        rectRangeShow();
         createRoom();
         createRoad();
     }
@@ -44,7 +50,8 @@ class Dungeon{
         // 最小の部屋: 5
         // 外の空白: 2マス
         // 余裕の空白: 1マス
-        if (_range <= (MINROOMSIZE + 3) * 2 + 1) {
+        // (3 + 3) * 2 + 1 = 6 * 2 = 12
+        if (_range <= (MINROOMSIZE + 3) * 2 + 5) {
             return true;
         }
         return false;
@@ -52,7 +59,6 @@ class Dungeon{
 
     void divisionMap(Rect _r){
         boolean hvFrag = RandomUtil.rand.nextBoolean();
-        // hvFrag = false;
         
         if(hvFrag){
             verticalSplit(_r);    // 縦に分割
@@ -83,7 +89,7 @@ class Dungeon{
 
     // 横
     void horizontalSplit(Rect _r) {
-        if (_r.getHeight() <= (MINROOMSIZE + 3) * 2 + 1){
+        if (_r.getHeight() <= (MINROOMSIZE + 3) * 2 + 2){
             return;
         }
 
@@ -106,31 +112,29 @@ class Dungeon{
         for(var e : mapList){
             // 部屋の大きさを求める
             // 壁, 空き, 分割戦(1, 1, 1)
-            int w = e.getWidth() - PADDING;
-            int h = e.getHeight() - PADDING;
+            int width = e.getWidth() - 2;
+            int height = e.getHeight() - 2;
+
+            // System.out.println("width = " + width + ", height = " + height);
 
             // 部屋の大きさを[MIN, w / h]の範囲で決める
-            int rx = RandomUtil.getRandomRange(MINROOMSIZE, w);
-            int ry = RandomUtil.getRandomRange(MINROOMSIZE, h);
-
-            // 部屋の区間が最大値を超えないようにする
-            rx = Math.min(rx, MAXROOMSIZE);
-            ry = Math.min(ry, MAXROOMSIZE);
-            // System.out.println("部屋の大きさ rx = " + rx + ", ry = " + ry);
+            int rx = RandomUtil.getRandomRange(MINROOMSIZE, width - 1);
+            // TODO: 起きたら直す
+            int ry = RandomUtil.getRandomRange(MINROOMSIZE, height) - 1;
+            System.out.println("rx = " + rx);
 
             // 空きサイズ(区間 - 部屋)
-            int fx = (w - rx);
-            int fy = (h - ry);
+            int fx = (width - rx);
+            int fy = (height - ry);
 
             // 部屋の左上の位置
-            // 分割戦１ますを除いた２マス分の補正
-            int lux = RandomUtil.getRandomRange(0, fx) + 2;
-            int luy = RandomUtil.getRandomRange(0, fy) + 2;
+            int lux = RandomUtil.getRandomRange(1, fx) + 1;
+            int luy = RandomUtil.getRandomRange(1, fy) + 1;
 
             int sx = e.left + lux;
-            int gx = sx + rx - 1;
+            int gx = sx + rx;
             int sy = e.top + luy;
-            int gy = sy + ry - 1;
+            int gy = sy + ry;
 
             e.setRect(new Rect(sx, sy, gx, gy));
 
@@ -291,13 +295,13 @@ class Dungeon{
         for (int y = 0; y < HEIGHT; y++) {
             for (int x = 0; x < WIDTH; x++) {
                 if(getMapChip(x, y) == 0){
-                    System.out.print("` ");
+                    System.out.print("  ");
                 }
                 else if(getMapChip(x, y) == 1){
                     System.out.print("+ ");
                 }
                 else if(getMapChip(x, y) == 2){
-                    System.out.print("P ");
+                    System.out.print("X ");
                 }
             }
             System.out.println();
