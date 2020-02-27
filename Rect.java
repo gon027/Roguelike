@@ -1,9 +1,12 @@
+import java.util.*;
+
 class Rect {
     public int left;
     public int top;
     public int right;
     public int bottom;
     public Rect room;
+    private ArrayList<Integer> nextRoom;
 
     Rect(int _left, int _top, int _right, int _bottom) {
         set(_left, _top, _right, _bottom);

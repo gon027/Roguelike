@@ -70,12 +70,12 @@ class Dungeon{
 
     // 縦
     void verticalSplit(Rect _r){
-        if(divisionCheck(_r.getWidth())){
+        if(_r.getWidth() <= (MINROOMSIZE + 3) * 2 + 5){
             return;
         }
 
         // 分割点
-        int div = _r.getWidth() - (MINROOMSIZE * 2) - 4;
+        int div = _r.getWidth() - (MINROOMSIZE * 2) - (PADDING * 2);
         div = Math.min(div, MAXROOMSIZE);
         int left = (_r.left + 8) + RandomUtil.getRandomRange(0, div);
 
@@ -89,20 +89,20 @@ class Dungeon{
 
     // 横
     void horizontalSplit(Rect _r) {
-        if (_r.getHeight() <= (MINROOMSIZE + 3) * 2 + 2){
+        // (3 + 3) * 2 + 3 = 6 * 2 + 3 = 12 + 3 = 15
+        if (_r.getHeight() <= (MINROOMSIZEY + 3) * 2 + 1){
             return;
         }
 
         int div = _r.getHeight() - (MINROOMSIZE * 2) - 4;
         div = Math.min(div, MAXROOMSIZE);
+
+        System.out.println(div);
         int top = (_r.top + 7) + RandomUtil.getRandomRange(0, div);
 
         Rect child = new Rect(_r.left, top, _r.right, _r.bottom);
         mapList.add(child);
         _r.set(_r.left, _r.top, _r.right, top + 1);
-
-        System.out.println(child);
-        // System.out.println(_r);
 
         divisionMap(mapList.get(mapList.size() - 1));
         divisionMap(_r);
@@ -115,13 +115,9 @@ class Dungeon{
             int width = e.getWidth() - 2;
             int height = e.getHeight() - 2;
 
-            // System.out.println("width = " + width + ", height = " + height);
-
             // 部屋の大きさを[MIN, w / h]の範囲で決める
             int rx = RandomUtil.getRandomRange(MINROOMSIZE, width - 1);
-            // TODO: 起きたら直す
             int ry = RandomUtil.getRandomRange(MINROOMSIZE, height) - 1;
-            System.out.println("rx = " + rx);
 
             // 空きサイズ(区間 - 部屋)
             int fx = (width - rx);
@@ -143,64 +139,13 @@ class Dungeon{
     }
 
     void createRoad(){
-        /*for(int i = 0; i < mapList.size(); i++){
-
-            int index_left = i;
-            int index_right = (i + 1) % mapList.size();
-            Rect r1 = mapList.get(index_left);
-            Rect r2 = mapList.get(index_right);
-
-            // 場合分け
-            if(r1.top == r2.bottom || r1.bottom == r2.top){
-                int x1 = 0, x2 = 0, y = 0, p = 0;
-                
-                x1 = RandomUtil.getRandomRange(r1.room.left, r1.room.right);
-                x2 = RandomUtil.getRandomRange(r2.room.left, r2.room.right);
-                // p = RandomUtil.getRandomRange(, _max)
-                if(r1.top > r2.top){
-                    y = r1.top;
-                    fillValue(x1, y + 1, x1 + 1, r1.room.top, roomDebugCount);
-                    fillValue(x2, r2.room.bottom, x2 + 1, y, roomDebugCount);
-                    // linkPointVertical(x1, y + 1, x1, r1.room.top);
-                    // linkPointVertical(x2, r2.room.bottom, x2 + 1, y);
-                }else{
-                    y = r2.top;
-                    fillValue(x1, r1.room.bottom, x1 + 1, y, roomDebugCount);
-                    fillValue(x2, y, x2 + 1, r2.room.top, roomDebugCount);
-                    // linkPointVertical(x1, r1.room.bottom, x1 + 1, y);
-                    // linkPointVertical(x2, y, x2 + 1, r2.room.top);
-                }
-
-                fillHLine(x1, x2, y, roomDebugCount);
-
-                
-
-            }else if(r1.left == r2.right || r1.right == r2.left){
-                int y1 = 0, y2 = 0, x = 0;
-                y1 = RandomUtil.getRandomRange(r1.room.top, r1.room.bottom);
-                y2 = RandomUtil.getRandomRange(r2.room.top, r2.room.bottom);
-
-                if(r1.left > r2.left){
-                    x = r1.left;
-                    fillValue(r2.room.right, y2, x, y2 + 1, roomDebugCount);
-                    fillValue(x + 1, y1, r1.room.left, y1 + 1, roomDebugCount);
-                }
-                else{
-                    x = r2.left;
-                    fillValue(r1.room.right, y1, x, y1 + 1, roomDebugCount);
-                    fillValue(x, y2, r2.room.left, y2 + 1, roomDebugCount);
-                }
-                fillVLine(y1, y2, x, roomDebugCount);
-            }
-        }*/
-
         for (var r : mapList) {
             // 上下にランダムな道を作る
             int rtx = RandomUtil.getRandomRange(r.room.left, r.room.right);
             if(outOfArrayY(r.top, r.room.top)){
                 fillHLine(r.left + 1, r.right - 1, r.top, MapChip.MAP_NONE);
                 fillVLine(r.top, r.room.top, rtx, MapChip.MAP_NONE);
-        }
+            }
 
             rtx = RandomUtil.getRandomRange(r.room.left, r.room.right);
             if(outOfArrayY(r.room.bottom, r.bottom)){
@@ -301,7 +246,7 @@ class Dungeon{
                     System.out.print("+ ");
                 }
                 else if(getMapChip(x, y) == 2){
-                    System.out.print("X ");
+                    System.out.print("O ");
                 }
             }
             System.out.println();
