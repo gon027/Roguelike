@@ -6,10 +6,15 @@ class Rect {
     public int right;
     public int bottom;
     public Rect room;
-    private ArrayList<Integer> nextRoom;
+    public int roomID;      // 部屋ID
+    public ArrayList<Integer> nextRoomID;      // 部屋をつなげるための部屋ID
 
     Rect(int _left, int _top, int _right, int _bottom) {
         set(_left, _top, _right, _bottom);
+    }
+
+    Rect(int _left, int _top, int _right, int _bottom, int _roomID){
+        set(_left, _top, _right, _bottom, _roomID);
     }
 
     void set(int _left, int _top, int _right, int _bottom) {
@@ -17,6 +22,12 @@ class Rect {
         top = _top;
         right = _right;
         bottom = _bottom;
+        nextRoomID = new ArrayList<>();
+    }
+
+    void set(int _left, int _top, int _right, int _bottom, int _roomID){
+        set(_left, _top, _right, _bottom);
+        roomID = _roomID;
     }
 
     void setRect(Rect _rect){
@@ -38,6 +49,7 @@ class Rect {
                 ", right = " + right + 
                 ", bottom = " + bottom + 
                 ", width = " + getWidth() + 
-                ", height = " + getHeight();
+                ", height = " + getHeight() +
+                ", roomID = " + roomID;
     }
 }

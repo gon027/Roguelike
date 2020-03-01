@@ -1,11 +1,8 @@
 import java.util.*;
 
 class Dungeon{
-    private int[][] map;
+    public DungeonMap dmap;
     private ArrayList<Rect> mapList;
-
-    private final int WIDTH;
-    private final int HEIGHT;
 
     // 部屋の大きさの最大値と最小値
     private final int MINROOMSIZE = 4;
@@ -18,16 +15,16 @@ class Dungeon{
     private final int MAXROOMSIZEY = 5;
     private final int PADDING = 2;
 
+    // 部屋の数
+    private int roomCount = 1;
+
     Dungeon() {
         this(54, 30);
     }
 
     Dungeon(int _width, int _height){
-        WIDTH = _width;
-        HEIGHT = _height;
-        map = new int[HEIGHT][WIDTH];
+        dmap = new DungeonMap(_width, _height);
         mapList = new ArrayList<Rect>();
-
         createDungeon();
     }
 
@@ -40,9 +37,10 @@ class Dungeon{
     }
 
     void init() {
-        fillValue(0, 0, WIDTH, HEIGHT, MapChip.MAP_WALL);
+        roomCount = 1;
+        dmap.mapClear();
         mapList.clear();
-        mapList.add(new Rect(0, 0, WIDTH, HEIGHT));
+        mapList.add(new Rect(0, 0, dmap.WIDTH, dmap.HEIGHT, roomCount));
     }
 
     // 分割できるか判定
@@ -79,7 +77,8 @@ class Dungeon{
         div = Math.min(div, MAXROOMSIZE);
         int left = (_r.left + 8) + RandomUtil.getRandomRange(0, div);
 
-        Rect child = new Rect(left, _r.top, _r.right, _r.bottom);
+        roomCount++;
+        Rect child = new Rect(left, _r.top, _r.right, _r.bottom, roomCount);
         mapList.add(child);
         _r.set(_r.left, _r.top, left + 1, _r.bottom);
 
@@ -100,7 +99,8 @@ class Dungeon{
         System.out.println(div);
         int top = (_r.top + 7) + RandomUtil.getRandomRange(0, div);
 
-        Rect child = new Rect(_r.left, top, _r.right, _r.bottom);
+        roomCount++;
+        Rect child = new Rect(_r.left, top, _r.right, _r.bottom, roomCount);
         mapList.add(child);
         _r.set(_r.left, _r.top, _r.right, top + 1);
 
@@ -134,11 +134,36 @@ class Dungeon{
 
             e.setRect(new Rect(sx, sy, gx, gy));
 
-            fillValue(sx, sy, gx, gy, MapChip.MAP_NONE);
+            dmap.fillValue(sx, sy, gx, gy, MapChip.MAP_NONE);
+        }
+    }
+
+    void checkConectRoom(){
+        Rect target, next;
+        boolean nextFrag;
+        // 繋ぐ部屋を調べる
+        for(int i = 0; i < mapList.size(); i++){
+            target = mapList.get(i);
+            for(int j = 0; j < mapList.size(); j++){
+                if(i == j) continue;
+                
+                next = mapList.get(j);
+                if(target.left == next.right - 1 || target.top == next.bottom - 1 
+                    || target.right - 1 == next.left || target.bottom - 1 == next.top){
+                    target.nextRoomID.add(next.roomID);
+                }
+            }
+        }
+
+        for (var e : mapList) {
+            for (var em : e.nextRoomID) {
+                System.err.println("roomID = " + e.roomID + " : " + em);
+            }
         }
     }
 
     void createRoad(){
+        checkConectRoom();
         for (var r : mapList) {
             // 上下にランダムな道を作る
             int rtx = RandomUtil.getRandomRange(r.room.left, r.room.right);
@@ -173,7 +198,7 @@ class Dungeon{
             _right = t;
         }
 
-        fillValue(_left, _y, _right, _y + 1, _value);
+        dmap.fillValue(_left, _y, _right, _y + 1, _value);
     }
 
     void fillVLine(int _top, int _bottom, int _x, int _value){
@@ -183,18 +208,18 @@ class Dungeon{
             _bottom = t;
         }
 
-        fillValue(_x, _top, _x + 1, _bottom, _value);
+        dmap.fillValue(_x, _top, _x + 1, _bottom, _value);
     }
 
     boolean outOfArrayY(int _top, int _bottom){
-        if(_top <= 0 || _bottom >= HEIGHT){
+        if(_top <= 0 || _bottom >= dmap.HEIGHT){
             return false;
         }
         return true;
     }
 
     boolean outOfArrayX(int _left, int _right) {
-        if (_left <= 0 || _right >= WIDTH) {
+        if (_left <= 0 || _right >= dmap.WIDTH) {
             return false;
         }
         return true;
@@ -206,8 +231,8 @@ class Dungeon{
         int hheight = RandomUtil.getRandomRange(2, height - 1);
         int dist = _y1 + hheight;
 
-        fillValue(_x1, _y1, _x1 + 1, dist, _value);
-        fillValue(_x2, dist, _x2 + 1, _y2 + 1, _value);
+        dmap.fillValue(_x1, _y1, _x1 + 1, dist, _value);
+        dmap.fillValue(_x2, dist, _x2 + 1, _y2 + 1, _value);
 
         if (_x1 > _x2) {
             int t = _x1;
@@ -215,7 +240,7 @@ class Dungeon{
             _x2 = t;
         }
 
-        fillValue(_x1, dist, _x2 + 1, dist + 1, _value);
+        dmap.fillValue(_x1, dist, _x2 + 1, dist + 1, _value);
     }
 
     void linkPointHorizontal(int _x1, int _y1, int _x2, int _y2, int _value) {
@@ -224,8 +249,8 @@ class Dungeon{
         int hwidth = RandomUtil.getRandomRange(2, width - 1);
         int dist = _x1 + hwidth;
 
-        fillValue(_x1, _y1, dist, _y1 + 1, _value);
-        fillValue(dist, _y2, _x2 + 1, _y2 + 1, _value);
+        dmap.fillValue(_x1, _y1, dist, _y1 + 1, _value);
+        dmap.fillValue(dist, _y2, _x2 + 1, _y2 + 1, _value);
 
         if (_y1 > _y2) {
             int t = _y1;
@@ -233,47 +258,7 @@ class Dungeon{
             _y2 = t;
         }
 
-        fillValue(dist, _y1, dist + 1, _y2 + 1, _value);
-    }
-
-    public void mapPrint(){
-        for (int y = 0; y < HEIGHT; y++) {
-            for (int x = 0; x < WIDTH; x++) {
-                if(getMapChip(x, y) == 0){
-                    System.out.print("  ");
-                }
-                else if(getMapChip(x, y) == 1){
-                    System.out.print("+ ");
-                }
-                else if(getMapChip(x, y) == 2){
-                    System.out.print("O ");
-                }
-            }
-            System.out.println();
-        }
-    }
-
-    void setValue(final int _x, final int _y, final int _value) {
-        map[_y][_x] = _value;
-    }
-
-    void fillValue(final int _sx, final int _sy, final int _gx, final int _gy, final int _value) {
-        for (int y = _sy; y < _gy; y++) {
-            for (int x = _sx; x < _gx; x++) {
-                setValue(x, y, _value);
-            }
-        }
-    }
-
-    int getMapChip(int _x, int _y){
-        return map[_y][_x];
-    }
-
-    boolean outOfArray(final int _x, final int _y) {
-        if (_x < 0 || _x >= WIDTH || _y < 0 || _y >= HEIGHT) {
-            return true;
-        }
-        return false;
+        dmap.fillValue(dist, _y1, dist + 1, _y2 + 1, _value);
     }
 
     void rectRangeShow(){
@@ -281,7 +266,7 @@ class Dungeon{
             for(int y = e.top; y < e.bottom; y++){
                 for(int x = e.left; x < e.right; x++){
                     if(y == e.top || y == e.bottom - 1 || x == e.left || x == e.right - 1){
-                        setValue(x, y, MapChip.MAP_DEBUG);
+                        dmap.setValue(x, y, MapChip.MAP_DEBUG);
                     }
                 }
             }
