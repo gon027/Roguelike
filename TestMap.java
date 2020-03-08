@@ -5,12 +5,12 @@ class TestMap{
     final int HEIGHT = 20;
 
     int map[][];
-    private ArrayList<Rect> mapList = new ArrayList<Rect>();
+    private ArrayList<DungeonRect> mapList = new ArrayList<DungeonRect>();
 
     TestMap(){
         map = new int[HEIGHT][WIDTH];
         init();
-        mapList.add(new Rect(0, 0, WIDTH, HEIGHT));
+        mapList.add(new DungeonRect(0, 0, WIDTH, HEIGHT));
         // mapList.add(new Rect(0, 0, 10, 10));
         // mapList.add(new Rect(10, 0, WIDTH, 10));
         createRoom();
@@ -29,7 +29,7 @@ class TestMap{
         // mapList.get(1).setRect(new Rect(15, 3, 18, 9));
 
         fillValue(5, 5, 13, 13, 1);
-        mapList.get(0).setRect(new Rect(5, 5, 13, 13));
+        mapList.get(0).setRect(new DungeonRect(5, 5, 13, 13));
 
         for (var e : mapList) {
             for (int y = e.top; y < e.bottom; y++) {
@@ -43,7 +43,7 @@ class TestMap{
     }
 
     void createRoad(){
-        Rect r = mapList.get(0);
+        DungeonRect r = mapList.get(0);
         // Rect r2 = mapList.get(1);
 
         // int ly = RandomUtil.getRandomRange(r1.room.top, r1.room.bottom);

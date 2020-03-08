@@ -1,30 +1,27 @@
 import java.util.*;
 
-class Rect {
-    // class R{
-    //     public int left;
-    //     public int top;
-    //     public int right;
-    //     public int bottom;
-    // }
-
-    // R roomr;
-    // R rectr;
-
+class Rect{
     public int left;
     public int top;
     public int right;
     public int bottom;
-    public Rect room;
+}
+
+class DungeonRect {
+    public int left;
+    public int top;
+    public int right;
+    public int bottom;
+    public DungeonRect room;
     public int roomID;      // 部屋ID
     public boolean isConected;
     public ArrayList<Integer> nextRoomID;      // 部屋をつなげるための部屋ID
 
-    Rect(int _left, int _top, int _right, int _bottom) {
+    DungeonRect(int _left, int _top, int _right, int _bottom) {
         set(_left, _top, _right, _bottom);
     }
 
-    Rect(int _left, int _top, int _right, int _bottom, int _roomID){
+    DungeonRect(int _left, int _top, int _right, int _bottom, int _roomID){
         set(_left, _top, _right, _bottom, _roomID);
     }
 
@@ -42,7 +39,7 @@ class Rect {
         roomID = _roomID;
     }
 
-    void setRect(Rect _rect){
+    void setRect(DungeonRect _rect){
         room = _rect;
     }
 
