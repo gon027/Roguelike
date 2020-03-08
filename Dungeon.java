@@ -32,9 +32,12 @@ class Dungeon{
     void createDungeon(){
         init();
         divisionMap(mapList.get(0));
-        // rectRangeShow();
+        rectRangeShow();
         createRoom();
         createRoad();
+        for (Rect rect : mapList) {
+            System.out.println(rect);
+        }
     }
 
     void init() {
@@ -58,7 +61,8 @@ class Dungeon{
 
     void divisionMap(Rect _r){
         boolean hvFrag = RandomUtil.rand.nextBoolean();
-        
+        // hvFrag = true;
+
         if(hvFrag){
             verticalSplit(_r);    // 縦に分割
         }
@@ -97,7 +101,7 @@ class Dungeon{
         int div = _r.getHeight() - (MINROOMSIZE * 2) - 4;
         div = Math.min(div, MAXROOMSIZE);
 
-        System.out.println(div);
+        // System.out.println(div);
         int top = (_r.top + 7) + RandomUtil.getRandomRange(0, div);
 
         roomCount++;
@@ -177,96 +181,88 @@ class Dungeon{
         int midy = 0;
 
         for(int i = 0; i < mapList.size(); i++){
-            Rect origin = mapList.get(i);
+            Rect now = mapList.get(i);
 
-            for(int j = 0; j < origin.nextRoomID.size(); j++){
-                Rect target = mapList.get(origin.nextRoomID.get(j));
+            for(int j = 0; j < now.nextRoomID.size(); j++){
+                Rect target = mapList.get(now.nextRoomID.get(j));
 
-                if(origin.isConected && target.isConected){
-                    break;
-                }
+                System.out.println(isHorizontallyAjeacent(now, target));
 
+                // if(now.isConected && target.isConected){
+                //     break;
+                // }
+
+                /*
                 boolean isDigRoadFlag = RandomUtil.rand.nextBoolean();
-                //isDigRoadFlag = false;
+                isDigRoadFlag = true;
 
                 if (isDigRoadFlag) {
                     // 縦に掘る
-                    if(origin.room.top > target.room.bottom){
+                    if(now.room.top > target.room.bottom){
                         // originがした
-                        nowPosx = RandomUtil.getRandomRange(origin.room.left, origin.room.right);
-                        nowPosy = origin.room.top;
+                        nowPosx = RandomUtil.getRandomRange(now.room.left, now.room.right);
+                        nowPosy = now.room.top;
                         targetPosx = RandomUtil.getRandomRange(target.room.left, target.room.right);
                         targetPosy = target.room.bottom;
-                        //midx = RandomUtil.getRandomRange(origin.left, origin.right);
-                        midy = origin.top;                        
+                        midy = now.top;   
                     }else{
                         nowPosx = RandomUtil.getRandomRange(target.room.left, target.room.right);
                         nowPosy = target.room.bottom;
-                        targetPosx = RandomUtil.getRandomRange(origin.room.left, origin.room.right);
-                        targetPosy = origin.room.top;
-                        // midx = RandomUtil.getRandomRange(origin.left, origin.right);
-                        midy = origin.top;
+                        targetPosx = RandomUtil.getRandomRange(now.room.left, now.room.right);
+                        targetPosy = now.room.top;
+                        midy = target.top;
                     }
 
-                    fillVLine(targetPosy, midy, targetPosx, MapChip.MAP_NONE);
-                    fillVLine(midy, nowPosy, nowPosx, MapChip.MAP_NONE);
-                    fillHLine(nowPosx, targetPosx, midy, MapChip.MAP_NONE);
+                    // すでに道がある場合
+                    if (dmap.getMapChip(nowPosx, nowPosy) == MapChip.MAP_DEBUG) {
+                        break;
+                    }
+
+                    if (dmap.getMapChip(targetPosx, targetPosy) == MapChip.MAP_DEBUG) {
+                        break;
+                    }
+
+                    fillVLine(targetPosy, midy, targetPosx, MapChip.MAP_DEBUG);
+                    fillVLine(midy, nowPosy, nowPosx, MapChip.MAP_DEBUG);
+                    fillHLine(nowPosx, targetPosx + 1, midy, MapChip.MAP_DEBUG);
 
                 } else {
                     // 横に掘る
-                    if(origin.room.right < target.room.left){
+                    if(now.room.right < target.room.left){
                         // originが左
-                        nowPosx = origin.room.right;
-                        nowPosy = RandomUtil.getRandomRange(origin.room.top, origin.room.bottom);
+                        nowPosx = now.room.right;
+                        nowPosy = RandomUtil.getRandomRange(now.room.top, now.room.bottom);
                         targetPosx = target.room.left;
                         targetPosy = RandomUtil.getRandomRange(target.room.top, target.room.bottom);
-                        midx = RandomUtil.getRandomRange(origin.top, origin.bottom);
+                        // midx = RandomUtil.getRandomRange(origin.top, origin.bottom);
+                        midx = now.right - 1;
 
                     }else{
                         nowPosx = target.room.right;
                         nowPosy = RandomUtil.getRandomRange(target.room.top, target.room.bottom);
 
-                        targetPosx = origin.room.right;
-                        targetPosy = RandomUtil.getRandomRange(origin.room.top, origin.room.bottom);
-                        midx = RandomUtil.getRandomRange(origin.top, origin.bottom);
+                        targetPosx = now.room.right;
+                        targetPosy = RandomUtil.getRandomRange(now.room.top, now.room.bottom);
+                        midx = RandomUtil.getRandomRange(now.top, now.bottom);
+                        midx = target.left;
                     }
 
-                    fillHLine(nowPosx, midx, nowPosy, MapChip.MAP_NONE);
-                    fillHLine(midx, targetPosx, targetPosy, MapChip.MAP_NONE);
-                    fillVLine(nowPosy, targetPosy, midx, MapChip.MAP_NONE);
+                    fillHLine(nowPosx, midx, nowPosy, MapChip.MAP_DEBUG);
+                    fillHLine(midx, targetPosx, targetPosy, MapChip.MAP_DEBUG);
+                    fillVLine(nowPosy, targetPosy + 1, midx, MapChip.MAP_DEBUG);
                 }
-                target.isConected = origin.isConected = true;
+                target.isConected = now.isConected = true;
+                */
             }
         }
+    }
 
-        
-        /*for (var r : mapList) {
-            // 上下にランダムな道を作る
-            int digX, digY;
-            int rtx = RandomUtil.getRandomRange(r.room.left, r.room.right);
-            if(outOfArrayY(r.top, r.room.top)){
-                // fillHLine(r.left + 1, r.right - 1, r.top, MapChip.MAP_NONE);
-                fillVLine(r.top, r.room.top, rtx, MapChip.MAP_NONE);
-            }
-
-            // rtx = RandomUtil.getRandomRange(r.room.left, r.room.right);
-            // if(outOfArrayY(r.room.bottom, r.bottom)){
-            //     fillVLine(r.room.bottom, r.bottom, rtx, MapChip.MAP_NONE);
-            // }
-
-            // int rty = RandomUtil.getRandomRange(r.room.top, r.room.bottom);
-            // if(outOfArrayX(r.left, r.room.left)){
-            //     fillVLine(r.top + 1, r.bottom - 1, r.left, MapChip.MAP_NONE);
-            //     fillHLine(r.left, r.room.left, rty, MapChip.MAP_NONE);
-            // }
-            
-
-            // rty = RandomUtil.getRandomRange(r.room.top, r.room.bottom);
-            // if(outOfArrayX(r.room.right, r.right)){
-            //     fillHLine(r.room.right, r.right, rty, MapChip.MAP_NONE);
-            // }
-        }*/
-        
+    // 矩形が横に接しているか
+    boolean isHorizontallyAjeacent(Rect now, Rect target){
+        if(now.right - 1 == target.left || now.left + 1 == target.right){
+            return true;
+        }
+        return false;
     }
 
     void fillHLine(int _left, int _right, int _y, int _value){
