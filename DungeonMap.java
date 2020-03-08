@@ -23,6 +23,10 @@ class DungeonMap{
     }
 
     public int getMapChip(int _x, int _y) {
+        if(outOfArray(_x, _y)){
+            return -1;
+        }
+
         return map[_y][_x];
     }
 

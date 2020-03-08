@@ -7,6 +7,7 @@ class Rect {
     public int bottom;
     public Rect room;
     public int roomID;      // 部屋ID
+    public boolean isConected;
     public ArrayList<Integer> nextRoomID;      // 部屋をつなげるための部屋ID
 
     Rect(int _left, int _top, int _right, int _bottom) {
@@ -22,6 +23,7 @@ class Rect {
         top = _top;
         right = _right;
         bottom = _bottom;
+        isConected = false;
         nextRoomID = new ArrayList<>();
     }
 

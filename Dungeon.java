@@ -8,15 +8,16 @@ class Dungeon{
     private final int MINROOMSIZE = 4;
     private final int MAXROOMSIZE = 6;
 
-    private final int MINROOMSIZEX = 4;
-    private final int MAXROOMSIZEX = 6;
+    // private final int MINROOMSIZEX = 4;
+    // private final int MAXROOMSIZEX = 6;
 
     private final int MINROOMSIZEY = 4;
-    private final int MAXROOMSIZEY = 5;
+    // private final int MAXROOMSIZEY = 5;
+
     private final int PADDING = 2;
 
     // 部屋の数
-    private int roomCount = 1;
+    private int roomCount = 0;
 
     Dungeon() {
         this(54, 30);
@@ -31,13 +32,13 @@ class Dungeon{
     void createDungeon(){
         init();
         divisionMap(mapList.get(0));
-        rectRangeShow();
+        // rectRangeShow();
         createRoom();
         createRoad();
     }
 
     void init() {
-        roomCount = 1;
+        roomCount = 0;
         dmap.mapClear();
         mapList.clear();
         mapList.add(new Rect(0, 0, dmap.WIDTH, dmap.HEIGHT, roomCount));
@@ -123,6 +124,9 @@ class Dungeon{
             int fx = (width - rx);
             int fy = (height - ry);
 
+            // int roomsizex = RandomUtil.getRandomRange(MINROOMSIZE, fx);
+            // int roomsizey = RandomUtil.getRandomRange(MINROOMSIZE, fy);
+
             // 部屋の左上の位置
             int lux = RandomUtil.getRandomRange(1, fx) + 1;
             int luy = RandomUtil.getRandomRange(1, fy) + 1;
@@ -155,40 +159,114 @@ class Dungeon{
             }
         }
 
-        for (var e : mapList) {
-            for (var em : e.nextRoomID) {
-                System.err.println("roomID = " + e.roomID + " : " + em);
-            }
-        }
+        // for (var e : mapList) {
+        //     for (var em : e.nextRoomID) {
+        //         System.err.println("roomID = " + e.roomID + " : " + em);
+        //     }
+        // }
     }
 
     void createRoad(){
         checkConectRoom();
-        for (var r : mapList) {
+
+        int nowPosx = 0;
+        int nowPosy = 0;
+        int targetPosx = 0;
+        int targetPosy = 0;
+        int midx = 0;
+        int midy = 0;
+
+        for(int i = 0; i < mapList.size(); i++){
+            Rect origin = mapList.get(i);
+
+            for(int j = 0; j < origin.nextRoomID.size(); j++){
+                Rect target = mapList.get(origin.nextRoomID.get(j));
+
+                if(origin.isConected && target.isConected){
+                    break;
+                }
+
+                boolean isDigRoadFlag = RandomUtil.rand.nextBoolean();
+                //isDigRoadFlag = false;
+
+                if (isDigRoadFlag) {
+                    // 縦に掘る
+                    if(origin.room.top > target.room.bottom){
+                        // originがした
+                        nowPosx = RandomUtil.getRandomRange(origin.room.left, origin.room.right);
+                        nowPosy = origin.room.top;
+                        targetPosx = RandomUtil.getRandomRange(target.room.left, target.room.right);
+                        targetPosy = target.room.bottom;
+                        //midx = RandomUtil.getRandomRange(origin.left, origin.right);
+                        midy = origin.top;                        
+                    }else{
+                        nowPosx = RandomUtil.getRandomRange(target.room.left, target.room.right);
+                        nowPosy = target.room.bottom;
+                        targetPosx = RandomUtil.getRandomRange(origin.room.left, origin.room.right);
+                        targetPosy = origin.room.top;
+                        // midx = RandomUtil.getRandomRange(origin.left, origin.right);
+                        midy = origin.top;
+                    }
+
+                    fillVLine(targetPosy, midy, targetPosx, MapChip.MAP_NONE);
+                    fillVLine(midy, nowPosy, nowPosx, MapChip.MAP_NONE);
+                    fillHLine(nowPosx, targetPosx, midy, MapChip.MAP_NONE);
+
+                } else {
+                    // 横に掘る
+                    if(origin.room.right < target.room.left){
+                        // originが左
+                        nowPosx = origin.room.right;
+                        nowPosy = RandomUtil.getRandomRange(origin.room.top, origin.room.bottom);
+                        targetPosx = target.room.left;
+                        targetPosy = RandomUtil.getRandomRange(target.room.top, target.room.bottom);
+                        midx = RandomUtil.getRandomRange(origin.top, origin.bottom);
+
+                    }else{
+                        nowPosx = target.room.right;
+                        nowPosy = RandomUtil.getRandomRange(target.room.top, target.room.bottom);
+
+                        targetPosx = origin.room.right;
+                        targetPosy = RandomUtil.getRandomRange(origin.room.top, origin.room.bottom);
+                        midx = RandomUtil.getRandomRange(origin.top, origin.bottom);
+                    }
+
+                    fillHLine(nowPosx, midx, nowPosy, MapChip.MAP_NONE);
+                    fillHLine(midx, targetPosx, targetPosy, MapChip.MAP_NONE);
+                    fillVLine(nowPosy, targetPosy, midx, MapChip.MAP_NONE);
+                }
+                target.isConected = origin.isConected = true;
+            }
+        }
+
+        
+        /*for (var r : mapList) {
             // 上下にランダムな道を作る
+            int digX, digY;
             int rtx = RandomUtil.getRandomRange(r.room.left, r.room.right);
             if(outOfArrayY(r.top, r.room.top)){
-                fillHLine(r.left + 1, r.right - 1, r.top, MapChip.MAP_NONE);
+                // fillHLine(r.left + 1, r.right - 1, r.top, MapChip.MAP_NONE);
                 fillVLine(r.top, r.room.top, rtx, MapChip.MAP_NONE);
             }
 
-            rtx = RandomUtil.getRandomRange(r.room.left, r.room.right);
-            if(outOfArrayY(r.room.bottom, r.bottom)){
-                fillVLine(r.room.bottom, r.bottom, rtx, MapChip.MAP_NONE);
-            }
+            // rtx = RandomUtil.getRandomRange(r.room.left, r.room.right);
+            // if(outOfArrayY(r.room.bottom, r.bottom)){
+            //     fillVLine(r.room.bottom, r.bottom, rtx, MapChip.MAP_NONE);
+            // }
 
-            int rty = RandomUtil.getRandomRange(r.room.top, r.room.bottom);
-            if(outOfArrayX(r.left, r.room.left)){
-                fillVLine(r.top + 1, r.bottom - 1, r.left, MapChip.MAP_NONE);
-                fillHLine(r.left, r.room.left, rty, MapChip.MAP_NONE);
-            }
+            // int rty = RandomUtil.getRandomRange(r.room.top, r.room.bottom);
+            // if(outOfArrayX(r.left, r.room.left)){
+            //     fillVLine(r.top + 1, r.bottom - 1, r.left, MapChip.MAP_NONE);
+            //     fillHLine(r.left, r.room.left, rty, MapChip.MAP_NONE);
+            // }
             
 
-            rty = RandomUtil.getRandomRange(r.room.top, r.room.bottom);
-            if(outOfArrayX(r.room.right, r.right)){
-                fillHLine(r.room.right, r.right, rty, MapChip.MAP_NONE);
-            }
-        }
+            // rty = RandomUtil.getRandomRange(r.room.top, r.room.bottom);
+            // if(outOfArrayX(r.room.right, r.right)){
+            //     fillHLine(r.room.right, r.right, rty, MapChip.MAP_NONE);
+            // }
+        }*/
+        
     }
 
     void fillHLine(int _left, int _right, int _y, int _value){
