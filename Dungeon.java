@@ -223,17 +223,16 @@ class Dungeon{
                         nowPosy = RandomUtil.getRandomRange(now.room.top, now.room.bottom);
                         targetPosx = target.room.left;
                         targetPosy = RandomUtil.getRandomRange(target.room.top, target.room.bottom);
-                        midx = now.right - 1;
-
+                        midx = now.right;
                     }
                     else{
-                        // nowPosx = target.room.right;
-                        // nowPosy = RandomUtil.getRandomRange(target.room.top, target.room.bottom);
+                        nowPosx = target.room.right;
+                        nowPosy = RandomUtil.getRandomRange(target.room.top, target.room.bottom);
 
-                        // targetPosx = now.room.right;
-                        // targetPosy = RandomUtil.getRandomRange(now.room.top, now.room.bottom);
-                        // midx = RandomUtil.getRandomRange(now.top, now.bottom);
-                        // midx = target.left;
+                        targetPosx = now.room.left;
+                        targetPosy = RandomUtil.getRandomRange(now.room.top, now.room.bottom);
+                        midx = RandomUtil.getRandomRange(now.top, now.bottom);
+                        midx = target.right;
                     }
 
                     fillHLine(nowPosx, midx, nowPosy, MapChip.MAP_DEBUG);
