@@ -42,6 +42,7 @@ class DungeonMap{
     }
 
     public void mapPrint() {
+        System.out.println();
         for (int y = 0; y < HEIGHT; y++) {
             for (int x = 0; x < WIDTH; x++) {
                 if (getMapChip(x, y) == 0) {

@@ -1,6 +1,16 @@
 import java.util.*;
 
 class Rect {
+    // class R{
+    //     public int left;
+    //     public int top;
+    //     public int right;
+    //     public int bottom;
+    // }
+
+    // R roomr;
+    // R rectr;
+
     public int left;
     public int top;
     public int right;
