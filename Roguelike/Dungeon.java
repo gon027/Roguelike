@@ -188,9 +188,27 @@ public class Dungeon{
                         midy = target.top;
                     }
 
+                    // 道の補正
+                    if (dmap.getMapChip(nowPosx - 1, nowPosy - 1) == MapChip.MAP_NONE) {
+                        System.out.println("うへへう");
+                        nowPosx -= 1;
+                    } else if (dmap.getMapChip(nowPosx + 1, nowPosy - 1) == MapChip.MAP_NONE) {
+                        System.out.println("うほほう");
+                        nowPosx += 1;
+                    }
+
+                    if (dmap.getMapChip(targetPosx - 1, targetPosy) == MapChip.MAP_NONE) {
+                        System.out.println("けへへ");
+                        targetPosx -= 1;
+                    }else if (dmap.getMapChip(targetPosx + 1, targetPosy) == MapChip.MAP_NONE){
+                        System.out.println("えほほ");
+                        targetPosx += 1;
+                    }
+
                     fillVLine(targetPosy, midy + 1, targetPosx, MapChip.MAP_NONE);
                     fillVLine(midy, nowPosy, nowPosx, MapChip.MAP_NONE);
                     fillHLine(nowPosx, targetPosx, midy, MapChip.MAP_NONE);
+
                 } 
                 else {
                     // 横に掘る
@@ -210,6 +228,10 @@ public class Dungeon{
                         targetPosy = RandomUtil.getRandomRange(now.room.top, now.room.bottom);
                         midx = target.right - 1;
                     }
+
+                    // 道の補正
+
+                    
 
                     fillHLine(nowPosx, midx + 1, nowPosy, MapChip.MAP_NONE);
                     fillHLine(midx, targetPosx, targetPosy, MapChip.MAP_NONE);
