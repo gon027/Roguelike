@@ -1,6 +1,7 @@
 package Roguelike;
 
 import java.util.*;
+import Roguelike.DungeonUtil.*;
 
 public class Dungeon{
     public DungeonMap dmap;

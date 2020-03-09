@@ -1,4 +1,4 @@
-package Roguelike;
+package Roguelike.DungeonUtil;
 
 public class RectAngle{
     public int left;

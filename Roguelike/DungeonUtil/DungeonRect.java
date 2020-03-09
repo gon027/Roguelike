@@ -1,8 +1,8 @@
-package Roguelike;
+package Roguelike.DungeonUtil;
 
 import java.util.*;
 
-class DungeonRect {
+public class DungeonRect {
     // public RectAngle rect;   // 大部屋
     // public RectAngle room;   // 部屋
 
@@ -15,15 +15,15 @@ class DungeonRect {
     public boolean isConected;
     public ArrayList<Integer> nextRoomID;      // 部屋をつなげるための部屋ID
 
-    DungeonRect(int _left, int _top, int _right, int _bottom) {
+    public DungeonRect(int _left, int _top, int _right, int _bottom) {
         set(_left, _top, _right, _bottom);
     }
 
-    DungeonRect(int _left, int _top, int _right, int _bottom, int _roomID){
+    public DungeonRect(int _left, int _top, int _right, int _bottom, int _roomID){
         set(_left, _top, _right, _bottom, _roomID);
     }
 
-    void set(int _left, int _top, int _right, int _bottom) {
+    public void set(int _left, int _top, int _right, int _bottom) {
         left = _left;
         top = _top;
         right = _right;
@@ -32,12 +32,12 @@ class DungeonRect {
         nextRoomID = new ArrayList<>();
     }
 
-    void set(int _left, int _top, int _right, int _bottom, int _roomID){
+    public void set(int _left, int _top, int _right, int _bottom, int _roomID){
         set(_left, _top, _right, _bottom);
         roomID = _roomID;
     }
 
-    void setRect(DungeonRect _rect){
+    public void setRect(DungeonRect _rect){
         room = _rect;
     }
 

@@ -1,4 +1,4 @@
-package Roguelike;
+package Roguelike.DungeonUtil;
 
 public class DungeonMap{
     private int[][] map;
