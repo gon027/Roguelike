@@ -50,8 +50,11 @@ public class Dungeon{
     }
 
     void divisionMap(DungeonRect _r){
+        if(roomCount == 8 - 1){
+            return;
+        }
+
         boolean hvFrag = RandomUtil.rand.nextBoolean();
-        // hvFrag = true;
 
         if(hvFrag){
             verticalSplit(_r);    // 縦に分割
@@ -148,6 +151,11 @@ public class Dungeon{
                 }
             }
         }
+
+        for (int i = 0; i < mapList.size(); i++) {
+            target = mapList.get(i);
+            Collections.shuffle(target.nextRoomID);
+        }
     }
 
     void createRoad(){
@@ -190,18 +198,14 @@ public class Dungeon{
 
                     // 道の補正
                     if (dmap.getMapChip(nowPosx - 1, nowPosy - 1) == MapChip.MAP_NONE) {
-                        System.out.println("うへへう");
                         nowPosx -= 1;
                     } else if (dmap.getMapChip(nowPosx + 1, nowPosy - 1) == MapChip.MAP_NONE) {
-                        System.out.println("うほほう");
                         nowPosx += 1;
                     }
 
                     if (dmap.getMapChip(targetPosx - 1, targetPosy) == MapChip.MAP_NONE) {
-                        System.out.println("けへへ");
                         targetPosx -= 1;
                     }else if (dmap.getMapChip(targetPosx + 1, targetPosy) == MapChip.MAP_NONE){
-                        System.out.println("えほほ");
                         targetPosx += 1;
                     }
 
@@ -230,8 +234,18 @@ public class Dungeon{
                     }
 
                     // 道の補正
+                    if(dmap.getMapChip(nowPosx, nowPosy - 1) == MapChip.MAP_NONE){
+                        nowPosy -= 1;
+                    }
+                    else if(dmap.getMapChip(nowPosx, nowPosy + 1) == MapChip.MAP_NONE){
+                        nowPosy += 1;
+                    }
 
-                    
+                    if (dmap.getMapChip(targetPosx - 1, targetPosy - 1) == MapChip.MAP_NONE) {
+                        targetPosy -= 1;
+                    } else if (dmap.getMapChip(targetPosx - 1, targetPosy + 1) == MapChip.MAP_NONE) {
+                        targetPosy += 1;
+                    }
 
                     fillHLine(nowPosx, midx + 1, nowPosy, MapChip.MAP_NONE);
                     fillHLine(midx, targetPosx, targetPosy, MapChip.MAP_NONE);
