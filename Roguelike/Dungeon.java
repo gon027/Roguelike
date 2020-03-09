@@ -1,6 +1,8 @@
+package Roguelike;
+
 import java.util.*;
 
-class Dungeon{
+public class Dungeon{
     public DungeonMap dmap;
     private ArrayList<DungeonRect> mapList;
 
@@ -19,11 +21,11 @@ class Dungeon{
     // 部屋の数
     private int roomCount = 0;
 
-    Dungeon() {
+    public Dungeon() {
         this(54, 30);
     }
 
-    Dungeon(int _width, int _height){
+    public Dungeon(int _width, int _height){
         dmap = new DungeonMap(_width, _height);
         mapList = new ArrayList<DungeonRect>();
         createDungeon();
@@ -35,9 +37,9 @@ class Dungeon{
         // rectRangeShow();
         createRoom();
         createRoad();
-        for (DungeonRect rect : mapList) {
-            System.out.println(rect);
-        }
+        // for (DungeonRect rect : mapList) {
+        //     System.out.println(rect);
+        // }
     }
 
     void init() {
@@ -45,18 +47,6 @@ class Dungeon{
         dmap.mapClear();
         mapList.clear();
         mapList.add(new DungeonRect(0, 0, dmap.WIDTH, dmap.HEIGHT, roomCount));
-    }
-
-    // 分割できるか判定
-    boolean divisionCheck(int _range) {
-        // 最小の部屋: 5
-        // 外の空白: 2マス
-        // 余裕の空白: 1マス
-        // (3 + 3) * 2 + 1 = 6 * 2 = 12
-        if (_range <= (MINROOMSIZE + 3) * 2 + 5) {
-            return true;
-        }
-        return false;
     }
 
     void divisionMap(DungeonRect _r){

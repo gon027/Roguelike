@@ -1,3 +1,5 @@
+import Roguelike.*;
+
 class Test{
     Dungeon map;
 
@@ -6,6 +8,7 @@ class Test{
         map.dmap.mapPrint();
         System.out.println();
     }
+
 
     public static void main(String[] args){
         new Test();

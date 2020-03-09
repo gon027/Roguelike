@@ -1,4 +1,6 @@
-class DungeonMap{
+package Roguelike;
+
+public class DungeonMap{
     private int[][] map;
 
     public final int WIDTH;

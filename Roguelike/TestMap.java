@@ -1,3 +1,5 @@
+package Roguelike;
+
 import java.util.*;
 
 class TestMap{
