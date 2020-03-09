@@ -128,9 +128,6 @@ class Dungeon{
             int fx = (width - rx);
             int fy = (height - ry);
 
-            // int roomsizex = RandomUtil.getRandomRange(MINROOMSIZE, fx);
-            // int roomsizey = RandomUtil.getRandomRange(MINROOMSIZE, fy);
-
             // 部屋の左上の位置
             int lux = RandomUtil.getRandomRange(1, fx) + 1;
             int luy = RandomUtil.getRandomRange(1, fy) + 1;
@@ -201,7 +198,7 @@ class Dungeon{
                         midy = target.top;
                     }
 
-                    fillVLine(targetPosy, midy, targetPosx, MapChip.MAP_NONE);
+                    fillVLine(targetPosy, midy + 1, targetPosx, MapChip.MAP_NONE);
                     fillVLine(midy, nowPosy, nowPosx, MapChip.MAP_NONE);
                     fillHLine(nowPosx, targetPosx, midy, MapChip.MAP_NONE);
                 } 
@@ -213,7 +210,7 @@ class Dungeon{
                         nowPosy = RandomUtil.getRandomRange(now.room.top, now.room.bottom);
                         targetPosx = target.room.left;
                         targetPosy = RandomUtil.getRandomRange(target.room.top, target.room.bottom);
-                        midx = now.right;
+                        midx = now.right - 1;
                     }
                     else{
                         nowPosx = target.room.right;
@@ -221,11 +218,10 @@ class Dungeon{
 
                         targetPosx = now.room.left;
                         targetPosy = RandomUtil.getRandomRange(now.room.top, now.room.bottom);
-                        midx = RandomUtil.getRandomRange(now.top, now.bottom);
-                        midx = target.right;
+                        midx = target.right - 1;
                     }
 
-                    fillHLine(nowPosx, midx, nowPosy, MapChip.MAP_NONE);
+                    fillHLine(nowPosx, midx + 1, nowPosy, MapChip.MAP_NONE);
                     fillHLine(midx, targetPosx, targetPosy, MapChip.MAP_NONE);
                     fillVLine(nowPosy, targetPosy + 1, midx, MapChip.MAP_NONE);
                 }
