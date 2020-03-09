@@ -1,6 +1,9 @@
 import java.util.*;
 
 class DungeonRect {
+    // public RectAngle rect;   // 大部屋
+    // public RectAngle room;   // 部屋
+
     public int left;
     public int top;
     public int right;

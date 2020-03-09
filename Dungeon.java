@@ -186,7 +186,7 @@ class Dungeon{
                 if (!isHorizontallyAjeacent(now, target)) {
                     // 縦に掘る
                     if(now.room.top > target.room.bottom){
-                        // originがした
+                        // nowがした
                         nowPosx = RandomUtil.getRandomRange(now.room.left, now.room.right);
                         nowPosy = now.room.top;
                         targetPosx = RandomUtil.getRandomRange(target.room.left, target.room.right);
@@ -201,10 +201,9 @@ class Dungeon{
                         midy = target.top;
                     }
 
-                    fillVLine(targetPosy, midy, targetPosx, MapChip.MAP_DEBUG);
-                    fillVLine(midy, nowPosy, nowPosx, MapChip.MAP_DEBUG);
-                    fillHLine(nowPosx, targetPosx, midy, MapChip.MAP_DEBUG);
-                    
+                    fillVLine(targetPosy, midy, targetPosx, MapChip.MAP_NONE);
+                    fillVLine(midy, nowPosy, nowPosx, MapChip.MAP_NONE);
+                    fillHLine(nowPosx, targetPosx, midy, MapChip.MAP_NONE);
                 } 
                 else {
                     // 横に掘る
@@ -226,10 +225,12 @@ class Dungeon{
                         midx = target.right;
                     }
 
-                    fillHLine(nowPosx, midx, nowPosy, MapChip.MAP_DEBUG);
-                    fillHLine(midx, targetPosx, targetPosy, MapChip.MAP_DEBUG);
-                    fillVLine(nowPosy, targetPosy + 1, midx, MapChip.MAP_DEBUG);
+                    fillHLine(nowPosx, midx, nowPosy, MapChip.MAP_NONE);
+                    fillHLine(midx, targetPosx, targetPosy, MapChip.MAP_NONE);
+                    fillVLine(nowPosy, targetPosy + 1, midx, MapChip.MAP_NONE);
                 }
+
+                now.isConected = target.isConected = true;
             }
         }
     }
