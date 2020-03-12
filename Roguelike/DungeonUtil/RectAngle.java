@@ -6,11 +6,11 @@ public class RectAngle{
     public int right;
     public int bottom;
 
-    RectAngle(int _left, int _top, int _right, int _bottom){
-        setRectAngle(_left, _top, _right, _bottom);
+    public RectAngle(){
+        
     }
 
-    void setRectAngle(int _left, int _top, int _right, int _bottom){
+    public void setRectAngle(int _left, int _top, int _right, int _bottom){
         left = _left;
         top = _top;
         right = _right;
