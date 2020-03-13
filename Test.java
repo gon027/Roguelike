@@ -1,7 +1,7 @@
 import Roguelike.*;
 
 class Test{
-    Dungeon map;
+    final Dungeon map;
 
     Test(){
         map = new Dungeon();

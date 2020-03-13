@@ -2,7 +2,7 @@ package Roguelike;
 
 import java.util.*;
 
-class RandomUtil{
+public class RandomUtil{
     public static Random rand = new Random();
 
     // [min, max)の範囲のランダムな数値を取得

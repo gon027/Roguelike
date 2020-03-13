@@ -4,8 +4,9 @@ import java.util.*;
 import Roguelike.DungeonUtil.*;
 
 public class Dungeon{
-    public DungeonMap dmap;
-    private final ArrayList<DungeonRect> mapList;
+    public final DungeonMap dmap;
+    public final ArrayList<DungeonRect> mapList;
+    private final CreateDungeon cDungeon;
 
     // 部屋の大きさの最大値と最小値
     private final int MINROOMSIZE = 4;
@@ -29,15 +30,17 @@ public class Dungeon{
     public Dungeon(final int _width, final int _height) {
         dmap = new DungeonMap(_width, _height);
         mapList = new ArrayList<DungeonRect>();
+        cDungeon = new CreateDungeon();
         createDungeon();
     }
 
     void createDungeon() {
         init();
         divisionMap(mapList.get(0));
-        // rectRangeShow();
         createRoom();
-        createRoad();
+        // rectShow();
+        cDungeon.digRoad(this, dmap);
+        // createRoad();
         // for (DungeonRect rect : mapList) {
         // System.out.println(rect);
         // }
@@ -267,7 +270,7 @@ public class Dungeon{
         return false;
     }
 
-    void fillHLine(int _left, int _right, final int _y, final int _value) {
+    public void fillHLine(int _left, int _right, final int _y, final int _value) {
         if (_left > _right) {
             final int t = _left;
             _left = _right;
@@ -277,7 +280,7 @@ public class Dungeon{
         dmap.fillValue(_left, _y, _right, _y + 1, _value);
     }
 
-    void fillVLine(int _top, int _bottom, final int _x, final int _value) {
+    public void fillVLine(int _top, int _bottom, final int _x, final int _value) {
         if (_top > _bottom) {
             final int t = _top;
             _top = _bottom;
@@ -286,4 +289,17 @@ public class Dungeon{
 
         dmap.fillValue(_x, _top, _x + 1, _bottom, _value);
     }
+
+    void rectShow() {
+        for (var e : mapList) {
+            for (int y = e.area.top; y < e.area.bottom; y++) {
+                for (int x = e.area.left; x < e.area.right; x++) {
+                    if (y == e.area.top || y == e.area.bottom - 1 || x == e.area.left || x == e.area.right - 1) {
+                        dmap.setValue(x, y, 2);
+                    }
+                }
+            }
+        }
+    }
+
 }
