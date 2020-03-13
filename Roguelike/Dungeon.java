@@ -4,19 +4,14 @@ import java.util.*;
 import Roguelike.DungeonUtil.*;
 
 public class Dungeon{
-    public final DungeonMap dmap;
+    private final DungeonMap dmap;
     public final ArrayList<DungeonRect> mapList;
     private final CreateDungeon cDungeon;
 
     // 部屋の大きさの最大値と最小値
     private final int MINROOMSIZE = 4;
     private final int MAXROOMSIZE = 6;
-
-    // private final int MINROOMSIZEX = 4;
-    // private final int MAXROOMSIZEX = 6;
-
     private final int MINROOMSIZEY = 4;
-    // private final int MAXROOMSIZEY = 5;
 
     private final int PADDING = 2;
 
@@ -39,10 +34,7 @@ public class Dungeon{
         divisionMap(mapList.get(0));
         createRoom();
         cDungeon.digRoad(this, dmap);
-        // createRoad();
-        // for (DungeonRect rect : mapList) {
-        // System.out.println(rect);
-        // }
+        // fillOutSideRect();
     }
 
     void init() {
@@ -54,10 +46,6 @@ public class Dungeon{
     }
 
     void divisionMap(final DungeonRect _r) {
-        if (roomCount == 8 - 1) {
-            return;
-        }
-
         final boolean hvFrag = RandomUtil.getFrag();
 
         if (hvFrag) {
@@ -99,7 +87,6 @@ public class Dungeon{
         int div = _r.area.getHeight() - (MINROOMSIZE * 2) - 4;
         div = Math.min(div, MAXROOMSIZE);
 
-        // System.out.println(div);
         final int top = (_r.area.top + 7) + RandomUtil.getRandomRange(0, div);
 
         roomCount++;
@@ -116,7 +103,6 @@ public class Dungeon{
     void createRoom() {
         for (final var e : mapList) {
             // 部屋の大きさを求める
-            // 壁, 空き, 分割戦(1, 1, 1)
             final int width = e.area.getWidth() - 2;
             final int height = e.area.getHeight() - 2;
 
@@ -138,135 +124,40 @@ public class Dungeon{
             final int gy = sy + ry;
 
             e.setRoom(sx, sy, gx, gy);
-
             dmap.fillValue(sx, sy, gx, gy, MapChip.MAP_NONE);
         }
     }
 
-    void checkConectRoom() {
-        DungeonRect target, next;
-        // 繋ぐ部屋を調べる
-        for (int i = 0; i < mapList.size(); i++) {
-            target = mapList.get(i);
-            for (int j = 0; j < mapList.size(); j++) {
-                if (i == j)
-                    continue;
-
-                next = mapList.get(j);
-                if (target.area.left == next.area.right - 1 || target.area.top == next.area.bottom - 1
-                        || target.area.right - 1 == next.area.left || target.area.bottom - 1 == next.area.top) {
-                    target.nextRoomID.add(next.roomID);
+    public void mapPrint() {
+        System.out.println();
+        for (int y = 0; y < dmap.HEIGHT; y++) {
+            for (int x = 0; x < dmap.WIDTH; x++) {
+                switch (dmap.getMapChip(x, y)) {
+                    case MapChip.MAP_WALL: {
+                        System.out.print("  ");
+                        break;
+                    }
+                    case MapChip.MAP_NONE: {
+                        System.out.print(". ");
+                        break;
+                    }
+                    case MapChip.MAP_GATE: {
+                        System.out.print("+ ");
+                        break;
+                    }
+                    case MapChip.MAP_OUT: {
+                        System.out.print("# ");
+                        break;
+                    }
+                    case MapChip.MAP_DEBUG: {
+                        System.out.print("O ");
+                        break;
+                    }
                 }
             }
+            System.out.println();
         }
-
-        for (int i = 0; i < mapList.size(); i++) {
-            target = mapList.get(i);
-            Collections.shuffle(target.nextRoomID);
-        }
-    }
-
-    void createRoad() {
-        checkConectRoom();
-
-        int nowPosx = 0;
-        int nowPosy = 0;
-        int targetPosx = 0;
-        int targetPosy = 0;
-        int midx = 0;
-        int midy = 0;
-
-        for (int i = 0; i < mapList.size(); i++) {
-            final DungeonRect now = mapList.get(i);
-
-            for (int j = 0; j < now.nextRoomID.size(); j++) {
-                final DungeonRect target = mapList.get(now.nextRoomID.get(j));
-
-                if (now.isConected && target.isConected) {
-                    continue;
-                }
-
-                if (!isHorizontallyAjeacent(now, target)) {
-                    // 縦に掘る
-                    if (now.room.top > target.room.bottom) {
-                        // nowがした
-                        nowPosx = RandomUtil.getRandomRange(now.room.left, now.room.right);
-                        nowPosy = now.room.top;
-                        targetPosx = RandomUtil.getRandomRange(target.room.left, target.room.right);
-                        targetPosy = target.room.bottom;
-                        midy = now.room.top;
-                    } else {
-                        nowPosx = RandomUtil.getRandomRange(target.room.left, target.room.right);
-                        nowPosy = target.room.top;
-                        targetPosx = RandomUtil.getRandomRange(now.room.left, now.room.right);
-                        targetPosy = now.room.bottom;
-                        midy = target.room.top;
-                    }
-
-                    // 道の補正
-                    if (dmap.getMapChip(nowPosx - 1, nowPosy - 1) == MapChip.MAP_NONE) {
-                        nowPosx -= 1;
-                    } else if (dmap.getMapChip(nowPosx + 1, nowPosy - 1) == MapChip.MAP_NONE) {
-                        nowPosx += 1;
-                    }
-
-                    if (dmap.getMapChip(targetPosx - 1, targetPosy) == MapChip.MAP_NONE) {
-                        targetPosx -= 1;
-                    } else if (dmap.getMapChip(targetPosx + 1, targetPosy) == MapChip.MAP_NONE) {
-                        targetPosx += 1;
-                    }
-
-                    fillVLine(targetPosy, midy + 1, targetPosx, MapChip.MAP_NONE);
-                    fillVLine(midy, nowPosy, nowPosx, MapChip.MAP_NONE);
-                    fillHLine(nowPosx, targetPosx, midy, MapChip.MAP_NONE);
-
-                } else {
-                    // 横に掘る
-                    if (now.room.right < target.room.left) {
-                        // originが左
-                        nowPosx = now.room.right;
-                        nowPosy = RandomUtil.getRandomRange(now.room.top, now.room.bottom);
-                        targetPosx = target.room.left;
-                        targetPosy = RandomUtil.getRandomRange(target.room.top, target.room.bottom);
-                        midx = now.room.right - 1;
-                    } else {
-                        nowPosx = target.room.right;
-                        nowPosy = RandomUtil.getRandomRange(target.room.top, target.room.bottom);
-
-                        targetPosx = now.room.left;
-                        targetPosy = RandomUtil.getRandomRange(now.room.top, now.room.bottom);
-                        midx = target.room.right - 1;
-                    }
-
-                    // 道の補正
-                    if (dmap.getMapChip(nowPosx, nowPosy - 1) == MapChip.MAP_NONE) {
-                        nowPosy -= 1;
-                    } else if (dmap.getMapChip(nowPosx, nowPosy + 1) == MapChip.MAP_NONE) {
-                        nowPosy += 1;
-                    }
-
-                    if (dmap.getMapChip(targetPosx - 1, targetPosy - 1) == MapChip.MAP_NONE) {
-                        targetPosy -= 1;
-                    } else if (dmap.getMapChip(targetPosx - 1, targetPosy + 1) == MapChip.MAP_NONE) {
-                        targetPosy += 1;
-                    }
-
-                    fillHLine(nowPosx, midx + 1, nowPosy, MapChip.MAP_NONE);
-                    fillHLine(midx, targetPosx, targetPosy, MapChip.MAP_NONE);
-                    fillVLine(nowPosy, targetPosy + 1, midx, MapChip.MAP_NONE);
-                }
-
-                now.isConected = target.isConected = true;
-            }
-        }
-    }
-
-    // 矩形が横に接しているか
-    boolean isHorizontallyAjeacent(final DungeonRect now, final DungeonRect target) {
-        if (now.area.right - 1 == target.area.left || now.area.left + 1 == target.area.right) {
-            return true;
-        }
-        return false;
+        System.out.println();
     }
 
     public void fillHLine(int _left, int _right, final int _y, final int _value) {
@@ -290,14 +181,11 @@ public class Dungeon{
     }
 
     void fillOutSideRect() {
-        for (var e : mapList) {
-            for (int y = e.area.top; y < e.area.bottom; y++) {
-                for (int x = e.area.left; x < e.area.right; x++) {
-                    if (y == e.area.top || y == e.area.bottom - 1 || x == e.area.left || x == e.area.right - 1) {
-                        dmap.setValue(x, y, 2);
-                    }
-                }
-            }
+        for (var rect : mapList) {
+            fillHLine(rect.area.left, rect.area.right - 1, rect.area.top, MapChip.MAP_DEBUG);
+            fillHLine(rect.area.left, rect.area.right - 1, rect.area.bottom - 1, MapChip.MAP_DEBUG);
+            fillVLine(rect.area.top, rect.area.bottom - 1, rect.area.left, MapChip.MAP_DEBUG);
+            fillVLine(rect.area.top, rect.area.bottom - 1, rect.area.right - 1, MapChip.MAP_DEBUG);
         }
     }
 }

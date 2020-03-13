@@ -42,36 +42,4 @@ public class DungeonMap{
         }
         return false;
     }
-
-    public void mapPrint() {
-        System.out.println();
-        for (int y = 0; y < HEIGHT; y++) {
-            for (int x = 0; x < WIDTH; x++) {
-                switch(getMapChip(x, y)){
-                    case MapChip.MAP_WALL:{
-                        System.out.print("  ");
-                        break;
-                    }
-                    case MapChip.MAP_NONE:{
-                        System.out.print(". ");
-                        break;
-                    }
-                    case MapChip.MAP_GATE: {
-                        System.out.print("+ ");
-                        break;
-                    }
-                    case MapChip.MAP_OUT: {
-                        System.out.print("# ");
-                        break;
-                    }
-                    case MapChip.MAP_DEBUG:{
-                        System.out.print("O ");
-                        break;
-                    }
-                }
-            }
-            System.out.println();
-        }
-        System.out.println();
-    }
 }

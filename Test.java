@@ -5,8 +5,7 @@ class Test{
 
     Test(){
         map = new Dungeon();
-        map.dmap.mapPrint();
-        System.out.println();
+        map.mapPrint();
     }
 
 
