@@ -1,7 +1,7 @@
 package Roguelike.DungeonUtil;
 
 public class DungeonMap{
-    private static int[][] map;
+    private int[][] map;
 
     public final int WIDTH;
     public final int HEIGHT;

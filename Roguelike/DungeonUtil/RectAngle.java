@@ -7,7 +7,7 @@ public class RectAngle{
     public int bottom;
 
     public RectAngle(){
-        
+        // default constracter
     }
 
     public void setRectAngle(int _left, int _top, int _right, int _bottom){

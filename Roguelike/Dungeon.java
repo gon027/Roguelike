@@ -38,7 +38,6 @@ public class Dungeon{
         init();
         divisionMap(mapList.get(0));
         createRoom();
-        // rectShow();
         cDungeon.digRoad(this, dmap);
         // createRoad();
         // for (DungeonRect rect : mapList) {
@@ -59,7 +58,7 @@ public class Dungeon{
             return;
         }
 
-        final boolean hvFrag = RandomUtil.rand.nextBoolean();
+        final boolean hvFrag = RandomUtil.getFrag();
 
         if (hvFrag) {
             verticalSplit(_r); // 縦に分割
@@ -290,7 +289,7 @@ public class Dungeon{
         dmap.fillValue(_x, _top, _x + 1, _bottom, _value);
     }
 
-    void rectShow() {
+    void fillOutSideRect() {
         for (var e : mapList) {
             for (int y = e.area.top; y < e.area.bottom; y++) {
                 for (int x = e.area.left; x < e.area.right; x++) {
@@ -301,5 +300,4 @@ public class Dungeon{
             }
         }
     }
-
 }
