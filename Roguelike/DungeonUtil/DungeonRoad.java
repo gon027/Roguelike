@@ -3,7 +3,7 @@ package Roguelike.DungeonUtil;
 import Roguelike.*;
 import Roguelike.RandomUtil;
 
-public class CreateDungeon{
+public class DungeonRoad{
     public void digRoad(Dungeon _dungeon, DungeonMap _dungeonMap){
         createDungeon(_dungeon, _dungeonMap);
     }

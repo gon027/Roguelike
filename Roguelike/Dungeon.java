@@ -6,7 +6,7 @@ import Roguelike.DungeonUtil.*;
 public class Dungeon{
     private final DungeonMap dmap;
     public final ArrayList<DungeonRect> mapList;
-    private final CreateDungeon cDungeon;
+    private final DungeonRoad dungeonRoad;
 
     // 部屋の大きさの最大値と最小値
     private final int MINROOMSIZE = 4;
@@ -25,7 +25,7 @@ public class Dungeon{
     public Dungeon(final int _width, final int _height) {
         dmap = new DungeonMap(_width, _height);
         mapList = new ArrayList<DungeonRect>();
-        cDungeon = new CreateDungeon();
+        dungeonRoad = new DungeonRoad();
         createDungeon();
     }
 
@@ -33,7 +33,7 @@ public class Dungeon{
         init();
         divisionMap(mapList.get(0));
         createRoom();
-        cDungeon.digRoad(this, dmap);
+        dungeonRoad.digRoad(this, dmap);
         // fillOutSideRect();
     }
 
